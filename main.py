@@ -1,26 +1,58 @@
 import subprocess
 from fpdf import FPDF
+import tkinter as tk
+from tkinter import ttk
 
-from kivy.app import App
-from kivy.uix.button import Button
-from kivy.uix.widget import Widget
+#https://www.pythontutorial.net/tkinter/tkinter-button/
+#https://www.sqlitetutorial.net/sqlite-python/
+class App(tk.Tk):
+    def __init__(self):
+        super().__init__()
 
+        self.geometry('800x480')
+        self.resizable(0, 0)
+        self.title('Login')
 
-class PongApp(App):
-    def build(self):
-        # use a (r, g, b, a) tuple
-        btn = Button(text="Push Me !",
-                     font_size="20sp",
-                     background_color=(1, 1, 1, 1),
-                     color=(1, 1, 1, 1),
-                     size=(32, 32),
-                     size_hint=(.2, .2),
-                     pos=(300, 250))
-        btn.bind(on_press=self.print_receipt)
-        return btn
+        # UI options
+        paddings = {'padx': 5, 'pady': 5}
+        entry_font = {'font': ('Helvetica', 11)}
 
-    def print_receipt(self, event):
-        filename = 'order.pdf'
+        # configure the grid
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=3)
+
+        username = tk.StringVar()
+        password = tk.StringVar()
+
+        # username
+        username_label = ttk.Label(self, text="Username:")
+        username_label.grid(column=0, row=0, sticky=tk.W, **paddings)
+
+        username_entry = ttk.Entry(self, textvariable=username, **entry_font)
+        username_entry.grid(column=1, row=0, sticky=tk.E, **paddings)
+
+        # password
+        password_label = ttk.Label(self, text="Password:")
+        password_label.grid(column=0, row=1, sticky=tk.W, **paddings)
+
+        password_entry = ttk.Entry(
+            self, textvariable=password, show="*", **entry_font)
+        password_entry.grid(column=1, row=1, sticky=tk.E, **paddings)
+
+        # login button
+        login_button = ttk.Button(self, text="Login")
+        login_button.grid(column=1, row=3, sticky=tk.E, **paddings)
+
+        # configure style
+        self.style = ttk.Style(self)
+        self.style.configure('TLabel', font=('Helvetica', 11))
+        self.style.configure('TButton', font=('Helvetica', 11))
+
+    def print_kitchen_receipt(self):
+        filename = 'kitchen.pdf'
+
+    def print_customer_receipt(self):
+        filename = 'customer.pdf'
 
         pdf = FPDF('P', 'mm', (57, 90))
         pdf.add_page()
@@ -43,8 +75,6 @@ class PongApp(App):
         subprocess.run(["lp", filename])
 
 
-
-
 if __name__ == '__main__':
-    PongApp().run()
-
+    app = App()
+    app.mainloop()
